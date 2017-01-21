@@ -34,10 +34,6 @@
   service: name=ntp state=running enabled=yes
   tags: ntp
 
-- name: Create data root folder
-  file: path={{ path.base }} state=directory owner={{ project.user }} group={{project.user}} mode=0775
-  tags: mount
-
 - name: Set hostname
   hostname: name="{{hostname}}"
 
