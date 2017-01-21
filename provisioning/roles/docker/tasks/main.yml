@@ -1,0 +1,35 @@
+---
+- name: Register uname
+  shell: uname -r
+  ignore_errors: yes
+  register: uname_result
+
+- name: Install recommended extra packages
+  apt: name={{ item }} state=latest
+  with_items:
+    - curl
+    - "linux-image-extra-{{ uname_result.stdout }}"
+    - linux-image-extra-virtual
+    - apt-transport-https
+    - ca-certificates
+
+- name: Add Docker’s official GPG key
+  apt_key:
+    url: "https://yum.dockerproject.org/gpg"
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+
+- apt_repository:
+    repo: deb https://apt.dockerproject.org/repo/ ubuntu-xenial main
+    state: present
+
+- apt_repository:
+    repo: deb https://apt.dockerproject.org/repo/ ubuntu-xenial main
+    state: present
+
+- apt: update_cache=yes
+- apt: upgrade=dist
+
+- name: Install the latest version of Docker
+  apt: name={{ item }} state=latest
+  with_items:
+    - docker-engine

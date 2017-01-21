@@ -1,0 +1,12 @@
+---
+- hosts: docker
+  become: yes
+  become_user: root
+  become_method: sudo
+
+  roles:
+    - common
+    - python-pip
+    - git
+    - docker
+    - docker-compose

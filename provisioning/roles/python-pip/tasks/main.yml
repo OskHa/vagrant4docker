@@ -1,0 +1,7 @@
+---
+- name: Install Python PIP with dependencies
+  apt: name={{ item }} state=latest
+  with_items:
+    - python-pip
+    - python-dev
+    - build-essential

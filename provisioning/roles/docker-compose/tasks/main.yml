@@ -1,0 +1,18 @@
+---
+- shell: uname -s
+  ignore_errors: yes
+  register: uname_s
+
+- shell: uname -m
+  ignore_errors: yes
+  register: uname_m
+
+- debug:
+    msg: "https://github.com/docker/compose/releases/download/1.9.0/docker-compose-{{ uname_s.stdout }}-{{ uname_m.stdout }}"
+
+- name: Download docker-compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/1.9.0/docker-compose-{{ uname_s.stdout }}-{{ uname_m.stdout }}"
+    dest: /usr/local/bin/docker-compose
+
+- file: dest=/usr/local/bin/docker-compose mode=a+x

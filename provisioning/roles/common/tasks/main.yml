@@ -1,0 +1,45 @@
+---
+- debug:
+    msg: "{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}"
+
+- apt: update_cache=yes
+- apt: upgrade=dist
+
+- name: install sudo
+  apt: name=sudo state=latest
+
+- name: install htop
+  apt: name=htop state=latest
+
+- name: install curl
+  apt: name=curl state=latest
+
+- name: install pkg-config
+  apt: name=pkg-config state=latest
+
+- name: install rsync (important for jenkins deployment)
+  apt: name=rsync state=latest
+
+- name: Set timezone to UTC
+  when: ansible_date_time.tz != 'UTC'
+  command: timedatectl set-timezone UTC
+
+- name: be sure ntp is installed
+  apt: name=ntp state=latest
+  notify:
+    - restart ntpd
+  tags: ntp
+
+- name: be sure ntpd is running and enabled
+  service: name=ntp state=running enabled=yes
+  tags: ntp
+
+- name: Create data root folder
+  file: path={{ path.base }} state=directory owner={{ project.user }} group={{project.user}} mode=0775
+  tags: mount
+
+- name: Set hostname
+  hostname: name="{{hostname}}"
+
+- name: Add hostname to hosts
+  lineinfile: dest=/etc/hosts state=present regexp='^{{ hostvars[inventory_hostname]['ansible_ssh_host'] }}' line="{{ hostvars[inventory_hostname]['ansible_ssh_host'] }} {{hostname}}"

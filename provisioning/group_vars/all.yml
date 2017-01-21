@@ -1,0 +1,6 @@
+---
+env: development
+
+project:
+  name: docker
+  user: vagrant
